@@ -4,11 +4,12 @@ import Link from 'next/link'
 import Layout from '../../../components/Layout'
 import matter from 'gray-matter'
 import Post from '../../../components/Post'
+import Pagination from '../../../components/Pagination'
 import { sortByDate } from '../../../utils'
 import { POSTS_PER_PAGE } from '../../../config'
 
 
-export default function BlogPage({ posts }) {
+export default function BlogPage({ posts, numPages, currentPage }) {
     console.log(posts)
     return (
         <Layout>
@@ -18,7 +19,7 @@ export default function BlogPage({ posts }) {
                     <Post key={index} post={post} />
                 ))}
             </div>
-
+            <Pagination currentPage={currentPage} numPages={numPages} />
         </Layout>
     )
 }
@@ -40,7 +41,9 @@ export async function getStaticPaths() {
         fallback: false
     }
 }
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+
+    const page = parseInt((params && params.page_index) || 1)
 
     // fs must be used in server side only because on client side it will lead to error
     const files = fs.readdirSync(path.join('posts'))
@@ -56,9 +59,17 @@ export async function getStaticProps() {
         }
     })
 
+    const numPages = Math.ceil(files.length / POSTS_PER_PAGE)
+    const pageIndex = page - 1
+    const orderedPosts = posts
+        .sort(sortByDate)
+        .slice(pageIndex * POSTS_PER_PAGE, (pageIndex + 1) * POSTS_PER_PAGE)
+
     return {
         props: {
-            posts: posts.sort(sortByDate),
+            posts: orderedPosts,
+            numPages,
+            currentPage: page
         }
     }
 }
