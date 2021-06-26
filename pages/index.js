@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Layout from '../components/Layout'
 import matter from 'gray-matter'
 import Post from '../components/Post'
-import sortByDate from '../utils'
+import { sortByDate } from '../utils'
 
 export default function HomePage({ posts }) {
   console.log(posts)
