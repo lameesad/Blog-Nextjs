@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import Link from 'next/link'
-import Layout from '../components/Layout'
+import Layout from '@/components/Layout'
 import matter from 'gray-matter'
-import Post from '../components/Post'
-import { sortByDate } from '../utils'
+import Post from '@/components/Post'
+import { sortByDate } from '@/utils/index'
 
 export default function HomePage({ posts }) {
   console.log(posts)
