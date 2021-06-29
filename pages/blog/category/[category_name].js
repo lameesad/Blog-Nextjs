@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
-import matter from 'gray-matter'
 import Post from '@/components/Post'
-import { sortByDate } from '@/utils/index'
+import matter from 'gray-matter'
+import { getPosts } from '@/lib/post'
 
 export default function CategoryBlogPage({ posts, categoryName }) {
 
@@ -45,21 +45,13 @@ export async function getStaticProps({ params: { category_name } }) {
     // fs must be used in server side only because on client side it will lead to error
     const files = fs.readdirSync(path.join('posts'))
 
-    const posts = files.map(filename => {
-        const slug = filename.replace('.md', '')
+    const posts = getPosts()
 
-        const markdownWithMeta = fs.readFileSync(path.join('posts', filename), 'utf-8')
-        const { data: frontmatter } = matter(markdownWithMeta)
-        return {
-            slug,
-            frontmatter,
-        }
-    })
     // Filter posts by category
     const categoryPosts = posts.filter(post => post.frontmatter.category.toLowerCase() === category_name)
     return {
         props: {
-            posts: categoryPosts.sort(sortByDate),
+            posts: categoryPosts,
             categoryName: category_name,
 
         }
